@@ -13,17 +13,12 @@ import (
 )
 
 func main() {
-	infuraKey := os.Getenv("INFURA_KEY")
-	if infuraKey == "" {
-		log.Fatal("INFURA_KEY environment variable not set")
-	}
-
 	alchemyKey := os.Getenv("ALCHEMY_KEY")
 	if alchemyKey == "" {
 		log.Fatal("ALCHEMY_KEY environment variable not set")
 	}
 
-	httpEndpoint := "https://mainnet.infura.io/v3/" + infuraKey
+	httpEndpoint := "https://eth-mainnet.g.alchemy.com/v2/" + alchemyKey
 	wssEndpoint := "wss://eth-mainnet.g.alchemy.com/v2/" + alchemyKey
 
 	ethClient := rpc.NewClient(httpEndpoint)
@@ -41,5 +36,3 @@ func main() {
 	fmt.Println("Mempulse API running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
-
-

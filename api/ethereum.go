@@ -1,6 +1,7 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -20,21 +21,21 @@ func EthereumHandler(client *rpc.Client) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 
-		blockNumber, err := client.GetBlockNumber()
+		// Create our context with a 5-second deadline
+		ctx, cancel := context.WithTimeout(r.Context(), 5*time.Second)
+		defer cancel()
+
+		blockNumber, err := client.GetBlockNumber(ctx)
 		if err != nil {
 			w.WriteHeader(http.StatusServiceUnavailable)
-			json.NewEncoder(w).Encode(map[string]string{
-				"error": err.Error(),
-			})
+			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 			return
 		}
 
-		gasPrice, err := client.GetGasPrice()
+		gasPrice, err := client.GetGasPrice(ctx)
 		if err != nil {
 			w.WriteHeader(http.StatusServiceUnavailable)
-			json.NewEncoder(w).Encode(map[string]string{
-				"error": err.Error(),
-			})
+			json.NewEncoder(w).Encode(map[string]string{"error": err.Error()})
 			return
 		}
 
